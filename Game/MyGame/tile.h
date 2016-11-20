@@ -3,11 +3,20 @@
 
 #include <QGraphicsPixmapItem>
 #include <QGraphicsRectItem>
+#include<QGraphicsSceneMouseEvent>
 
 class Tile: public QGraphicsPixmapItem
 {
+
 public:
-    Tile(QGraphicsPixmapItem* parent=NULL);
+    void mousePressEvent(QGraphicsSceneMouseEvent *event);
+    void checkState();
+    void capture();
+    QString Terrain;
+    Tile(QString terrain);
+
+
+
 
 private:
     QString owner;

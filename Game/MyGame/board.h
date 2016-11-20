@@ -12,7 +12,7 @@ public:
     void placeTiles(int x, int y, int columns, int rows);
 
 private:
-    void createTileColumn(int x, int y, int numberOfRows);
+    void createTileColumn(int x, int y, int numberOfRows, int currentColumn, int numberOfColumns);
     QList<Tile*> tiles;
 };
 

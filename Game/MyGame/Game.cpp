@@ -7,11 +7,19 @@ Game::Game(QWidget *parent)
 {
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    setFixedSize(800,600);
+    setFixedSize(1920,1080);
 
     scene = new QGraphicsScene();
-    scene->setSceneRect(0,0,800,600);
+    scene->setSceneRect(0,0,1920,1080);
     setScene(scene);
+
+    polozenie = new QGraphicsTextItem(QString("Wybierz polozenie miasta"));
+    QFont titleFont("tahoma",50);
+    polozenie->setFont(titleFont);
+    int text_xPosition = this->width()/2 - polozenie->boundingRect().width()/2;
+    int text_yPosition = 150;
+    polozenie->setPos(text_xPosition, text_yPosition);
+
 }
 
 void Game::displayMenu()
@@ -42,8 +50,40 @@ void Game::displayMenu()
 
 void Game::start()
 {
-
     scene->clear();
     board = new Board();
-    board->placeTiles(100,100,5,5);
+    board->placeTiles(100,100,20,16);
+    state = 0;
+    play();
+
+
+}
+
+void Game::play()
+{
+
+    switch(state)
+    {
+        case 0:
+        {
+
+            scene->addItem(this->polozenie);
+            break;
+        }
+
+        case 1:
+        {
+            break;
+        }
+
+        case 2:
+        {
+            break;
+        }
+
+        case 3:
+        {
+            break;
+        }
+    }
 }

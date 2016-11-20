@@ -12,10 +12,14 @@ class Game: public QGraphicsView
 public:
     Game(QWidget* parent=NULL);
     void displayMenu();
-
+    void play();
     QGraphicsScene * scene;
     Board* board;
     QString Turn;
+    //enum States {beginning = 0, idle = 1, player = 2, enemy = 3};
+    int state;
+
+    QGraphicsTextItem* polozenie;
 
 public slots:
     void start();

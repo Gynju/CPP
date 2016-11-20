@@ -1,5 +1,9 @@
 <RCC>
     <qresource prefix="/img">
         <file>img/fields.png</file>
+        <file>img/players_fields.png</file>
+        <file>img/town.png</file>
+        <file>img/forest.png</file>
+        <file>img/water.png</file>
     </qresource>
 </RCC>
