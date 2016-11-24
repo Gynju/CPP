@@ -5,9 +5,10 @@
 
 extern Game* game;
 
-Board::Board()
+Board::Board(int Width, int Height)
 {
-
+    width = Width;
+    height = Height;
 }
 
 QList<Tile *> Board::getTiles()
@@ -15,100 +16,53 @@ QList<Tile *> Board::getTiles()
     return tiles;
 }
 
-void Board::placeTiles(int x, int y, int columns, int rows)
+void Board::placeTiles(int x, int y)
 {
-    for(int i=0; i<columns; i++)
+    int world[width][height];
+    for(int i = 0; i < width; i++)
     {
-        createTileColumn(x+40*i, y, rows, i, columns);
+        for(int j = 0; j < height; j++)
+        {
+            world[i][j] = rand()%3;
+            qDebug()<<world[i][j];
+        }
     }
+    for(int i = 0; i < width; i++)
+    {
+        for(int j = 0; j < height; j++)
+        {
+            switch(world[i][j])
+            {
+                case 0:
+                {
+                    Tile * tile = new Tile("water");
+                    tile->setPos(x+40*i,y+40*j);
+                    tiles.append(tile);
+                    game->scene->addItem(tile);
+                    break;
+                }
+                case 1:
+                {
+                    Tile * tile = new Tile("fields");
+                    tile->setPos(x+40*i,y+40*j);
+                    tiles.append(tile);
+                    game->scene->addItem(tile);
+                    break;
+                }
+                case 2:
+                {
+                    Tile * tile = new Tile("forest");
+                    tile->setPos(x+40*i,y+40*j);
+                    tiles.append(tile);
+                    game->scene->addItem(tile);
+                    break;
+                }
+            }
+        }
+    }
+    /*for(int i=0; i<this->width; i++)
+    {
+        createTileColumn(x+40*i, y, this->height, i, this->width);
+    }*/
 }
 
-void Board::createTileColumn(int x, int y, int numberOfRows, int currentColumn, int numberOfColumns)
-{
-    if (numberOfColumns%2 == 0)
-    {
-        if(numberOfRows%2 == 0)
-        {
-            for(int i=0; i<numberOfRows; i++)
-            {
-                if((i>((numberOfRows/2)-2)) && (i<((numberOfRows/2)+1)) && (currentColumn>((numberOfColumns/2)-2)) && (currentColumn<((numberOfColumns/2)+1)))
-                {
-                    Tile * tile = new Tile("fields");
-                    tile->setPos(x,y+40*i);
-                    tiles.append(tile);
-                    game->scene->addItem(tile);
-                }
-                else
-                {
-                    Tile * tile = new Tile("water");
-                    tile->setPos(x,y+40*i);
-                    tiles.append(tile);
-                    game->scene->addItem(tile);
-                }
-            }
-        }
-        else
-        {
-            for(int i=0; i<numberOfRows; i++)
-            {
-                if((i==(numberOfRows/2)) && (currentColumn>((numberOfColumns/2)-2)) && (currentColumn<((numberOfColumns/2)+1)))
-                {
-                    Tile * tile = new Tile("fields");
-                    tile->setPos(x,y+40*i);
-                    tiles.append(tile);
-                    game->scene->addItem(tile);
-                }
-                else
-                {
-                    Tile * tile = new Tile("water");
-                    tile->setPos(x,y+40*i);
-                    tiles.append(tile);
-                    game->scene->addItem(tile);
-                }
-            }
-        }
-    }
-    else
-    {
-        if(numberOfRows%2 == 0)
-        {
-            for(int i=0; i<numberOfRows; i++)
-            {
-                if((i>((numberOfRows/2)-2)) && (i<((numberOfRows/2)+1)) && (currentColumn==(numberOfColumns/2)) )
-                {
-                    Tile * tile = new Tile("fields");
-                    tile->setPos(x,y+40*i);
-                    tiles.append(tile);
-                    game->scene->addItem(tile);
-                }
-                else
-                {
-                    Tile * tile = new Tile("water");
-                    tile->setPos(x,y+40*i);
-                    tiles.append(tile);
-                    game->scene->addItem(tile);
-                }
-            }
-        }
-        else
-        {
-            for(int i=0; i<numberOfRows; i++)
-            {
-                if( (i==(numberOfRows/2)) && (currentColumn==(numberOfColumns/2)) )
-                {
-                    Tile * tile = new Tile("fields");
-                    tile->setPos(x,y+40*i);
-                    tiles.append(tile);
-                    game->scene->addItem(tile);
-                }
-                else
-                {
-                    Tile * tile = new Tile("water");
-                    tile->setPos(x,y+40*i);
-                    tiles.append(tile);
-                    game->scene->addItem(tile);
-                }
-            }
-        }
-    }
-}

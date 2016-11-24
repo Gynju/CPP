@@ -3,6 +3,7 @@
 #include "Button.h"
 #include <QGraphicsRectItem>
 
+
 Game::Game(QWidget *parent)
 {
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -51,9 +52,10 @@ void Game::displayMenu()
 void Game::start()
 {
     scene->clear();
-    board = new Board();
-    board->placeTiles(100,100,20,16);
+    board = new Board(48,27);
+    board->placeTiles(0,0);
     state = 0;
+    scene->addItem(this->polozenie);
     play();
 
 
@@ -66,8 +68,6 @@ void Game::play()
     {
         case 0:
         {
-
-            scene->addItem(this->polozenie);
             break;
         }
 

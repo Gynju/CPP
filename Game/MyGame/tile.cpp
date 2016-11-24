@@ -15,6 +15,10 @@ Tile::Tile(QString terrain)
     {
         setPixmap(QPixmap(":img/img/fields.png"));
     }
+    if(Terrain == "forest")
+    {
+        setPixmap(QPixmap(":img/img/forest.png"));
+    }
     owner = "nobody";
 }
 
@@ -22,13 +26,20 @@ void Tile::checkState()
 {
     if (game->state == 0)
     {
+        if(Terrain == "water")
+        {
+            qDebug() << "Nie można postawić miasta na wodzie";
+        }
+        else
+        {
         setPixmap(QPixmap(":img/img/town.png"));
         game->state = 2;
         game->scene->removeItem(game->polozenie);
+        }
     }
     else
     {
-        if(Terrain == "wate")
+        if(Terrain == "water")
         {
             qDebug() << "Nie można przejąć terenu morskiego";
         }

@@ -7,12 +7,13 @@
 class Board
 {
 public:
-    Board();
+    Board(int Width, int Height);
+    int width;
+    int height;
     QList<Tile*> getTiles();
-    void placeTiles(int x, int y, int columns, int rows);
+    void placeTiles(int x, int y);
 
 private:
-    void createTileColumn(int x, int y, int numberOfRows, int currentColumn, int numberOfColumns);
     QList<Tile*> tiles;
 };
 
