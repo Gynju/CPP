@@ -3,27 +3,38 @@
 
 #include <QGraphicsPixmapItem>
 #include <QGraphicsRectItem>
-#include<QGraphicsSceneMouseEvent>
+#include <QGraphicsSceneMouseEvent>
+#include <QObject>
+#include "Button.h"
 
-class Tile: public QGraphicsPixmapItem
+class Tile: public QObject, public QGraphicsPixmapItem
 {
-
+    Q_OBJECT
 public:
-    void mousePressEvent(QGraphicsSceneMouseEvent *event);
-    void checkState();
+    Tile(QString Terrain, int X, int Y);
+
+    //void mousePressEvent(QGraphicsSceneMouseEvent *event);
+
     void capture();
-    QString Terrain;
-    Tile(QString terrain);
+    void mousePressEvent(QGraphicsSceneMouseEvent *event);
 
-
-
-
-private:
+    QString terrain;  
     QString owner;
-    int northAttackSide;
-    int southAttackSide;
-    int westAttackSide;
-    int eastAttackSide;
+    Button * yes_button;
+    Button * no_button;
+    bool occupied;
+    int listLocation;
+    int x_position;
+    int y_position;
+
+
+public slots:
+    void buildOnTerrain();
+    void buttonsDelete();
+    void selectUnit();
+
+    void checkClicked();
+
 
 };
 

@@ -4,6 +4,7 @@
 #
 #-------------------------------------------------
 
+
 QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
@@ -16,13 +17,17 @@ SOURCES += main.cpp \
     Game.cpp \
     Tile.cpp \
     Board.cpp \
-    Button.cpp
+    Button.cpp \
+    Unit.cpp
 
 HEADERS  += \
     Game.h \
     Tile.h \
     Board.h \
-    Button.h
+    Button.h \
+    Unit.h
 
 RESOURCES += \
     img.qrc
+
+CONFIG += c++11

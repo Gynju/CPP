@@ -2,7 +2,7 @@
 #define BUTTON_H
 
 #include <QGraphicsRectItem>
-#include<QGraphicsSceneMouseEvent>
+#include <QGraphicsSceneMouseEvent>
 
 
 class Button: public QObject, public QGraphicsRectItem

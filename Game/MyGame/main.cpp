@@ -1,6 +1,7 @@
 #include <QApplication>
 #include <ctime>
 #include "Game.h"
+#include "Tile.h"
 
 Game * game;
 
