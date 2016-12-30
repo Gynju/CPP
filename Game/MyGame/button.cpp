@@ -40,3 +40,8 @@ void Button::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
     brush.setColor(Qt::green);
     setBrush(brush);
 }
+
+void Button::deletingButton()
+{
+    delete this;
+}

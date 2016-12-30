@@ -7,5 +7,9 @@
         <file>img/water.png</file>
         <file>img/worker.png</file>
         <file>img/selected_worker.png</file>
+        <file>img/buildingDone.png</file>
+        <file>img/granary.png</file>
+        <file>img/sawmill.png</file>
+        <file>img/stonemason.png</file>
     </qresource>
 </RCC>

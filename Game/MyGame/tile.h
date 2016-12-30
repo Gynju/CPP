@@ -17,6 +17,9 @@ public:
 
     void capture();
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
+    void drawBorder();
+    void setBorder();
+    void settingCity();
 
     QString terrain;  
     QString owner;

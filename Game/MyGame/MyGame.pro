@@ -18,14 +18,22 @@ SOURCES += main.cpp \
     Tile.cpp \
     Board.cpp \
     Button.cpp \
-    Unit.cpp
+    Unit.cpp \
+    Building.cpp \
+    Recruiting.cpp \
+    Player.cpp \
+    City.cpp
 
 HEADERS  += \
     Game.h \
     Tile.h \
     Board.h \
     Button.h \
-    Unit.h
+    Unit.h \
+    Building.h \
+    Recruiting.h \
+    City.h \
+    Player.h
 
 RESOURCES += \
     img.qrc

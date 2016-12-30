@@ -1,5 +1,6 @@
 #include "Tile.h"
 #include "Game.h"
+#include <QPainter>
 #include <QDebug>
 
 extern Game * game;
@@ -34,17 +35,18 @@ void Tile::buttonsDelete()
 
 void Tile::selectUnit()
 {
-    int index;
-    for(int i = 0; i < game->unitList.count(); i++)
+    int index = 0;
+    for(int i = 0; i < game->currentPlayer->unitList.count(); i++)
     {
-        if(game->unitList[i]->x_position == this->x_position && game->unitList[i]->y_position == this->y_position)
+        if(game->currentPlayer->unitList[i]->x_position == this->x_position && game->currentPlayer->unitList[i]->y_position == this->y_position)
+        {
             index = i;
+            qDebug()<< "LOL";
+            game->currentPlayer->unitList[index]->selectUnit();
+        }
     }
-    game->unitList[index]->selected = true;
-    game->unitList[index]->setPixmap(QPixmap(":img/img/selected_worker.png"));
-    game->unitList[index]->showActions();
-}
 
+}
 
 void Tile::buildOnTerrain()
 {
@@ -64,76 +66,122 @@ void Tile::buildOnTerrain()
     buttonsDelete();
 }
 
-void Tile::checkClicked()
+void Tile::drawBorder()
 {
-    if (game->state == 0)
+    for(int i = 0; i < game->tileList.count(); i++)
     {
-        if(terrain == "water")
+        if(game->tileList[i]->owner != "nobody")
         {
-           //game->board->getTileType(x_position, y_position);
-           /*if(game->board->getTileType(x_position, y_position-1) == 0)//tiles[x_position][y_position-1].terrain == "water")
-            {
-                qDebug() << "Nad tobą tez jest woda";
-            }
-            else
-            {
-                qDebug() << "Nad tobą jest ląd";
-            }*/
-            qDebug() << "Nie można postawić miasta na wodzie";
-        }
-        else
-        {
-            owner = "player";
-            terrain = "city";
-            setPixmap(QPixmap(":img/img/town.png"));
-            game->scene->removeItem(game->polozenie);
-            game->createUnit(this->x_position, this->y_position, "worker", this->terrain);
-            occupied = true;
-            game->state = 1;
-            game->scene->update();
-            //game->scene->addItem(game->nextTurn);
+            QGraphicsRectItem * rec = new QGraphicsRectItem(game->tileList[i]->x_position, game->tileList[i]->y_position, 40, 40);
+            rec->setPen(QPen(Qt::red));
+            game->scene->addItem(rec);
         }
     }
-    else if(game->state == 2)
+
+}
+
+void Tile::setBorder()
+{
+    QString owner = game->currentPlayer->Name;
+    int i = this->listLocation;
+    game->tileList[i+1]->owner = owner;
+    game->tileList[i-1]->owner = owner;
+
+    game->tileList[i+game->board->height]->owner = owner;
+    game->tileList[i-game->board->height]->owner = owner;
+
+    game->tileList[(i+game->board->height)-1]->owner = owner;
+    game->tileList[(i-game->board->height)-1]->owner = owner;
+
+    game->tileList[(i+game->board->height)+1]->owner = owner;
+    game->tileList[(i-game->board->height)+1]->owner = owner;
+}
+
+void Tile::settingCity()
+{
+    if(terrain == "water")
     {
-        int index = 0;
-        for(int i = 0; i < game->unitList.count(); i++)
-        {
-            if(game->unitList[i]->x_position == this->x_position && game->unitList[i]->y_position == this->y_position)
-                index = i;
-        }
-        game->unitList[index]->setPos(this->x_position, this->y_position);
-        game->state = 1;
+        qDebug() << "Nie można postawić miasta na wodzie";
     }
     else
     {
-        if(terrain == "water")
+        if(terrain == "fields")
         {
-            qDebug() << "Nie można przejąć terenu morskiego";
+            game->currentPlayer->resourcesIncome[0] = 5;
+            game->currentPlayer->resourcesIncome[1] = 1;
+            game->currentPlayer->resourcesIncome[2] = 1;
         }
-        else if(terrain == "city")
+        else if(terrain == "forest")
         {
-            game->drawPanel(0, 0, 80, 1080, Qt::darkCyan, 1, "Player's city");
+            game->currentPlayer->resourcesIncome[0] = 1;
+            game->currentPlayer->resourcesIncome[1] = 5;
+            game->currentPlayer->resourcesIncome[2] = 1;
+        }
+        owner = game->currentPlayer->Name;
+        terrain = "city";
+        game->currentPlayer->city_X = this->x_position;
+        game->currentPlayer->city_Y = this->y_position;
+        game->currentPlayer->cityListLocation = this->listLocation;
+        setBorder();
+        drawBorder();
+        setPixmap(QPixmap(":img/img/town.png"));
+        game->createUnit(this->x_position, this->y_position, "worker", this->terrain, game->currentPlayer->Name, this->listLocation);
+        occupied = true;
+    }
+}
+
+void Tile::checkClicked()
+{
+
+    if (game->state == 0)//state = 0 - rozpoczynanie gry
+    {
+        int index = 0;
+        settingCity();
+
+        if(game->currentPlayer == game->playersList[game->playersList.size()-1])
+        {
+            game->currentPlayer = game->playersList[0];
+            game->scene->removeItem(game->polozenie);
+            game->state = 1;
+            game->scene->addItem(game->next_Turn);
+
         }
         else
         {
-            //Wyświetlenie przycisków zapytania o budowanie
-            yes_button = new Button(QString("Tak"));
-            int yes_button_xPosition = game->width()/2 - yes_button->boundingRect().width()/2;
-            int yes_button_yPosition = 700;
-            yes_button->setPos(yes_button_xPosition, yes_button_yPosition);
-
-            no_button = new Button(QString("Nie"));
-            int no_button_xPosition = game->width()/2 - no_button->boundingRect().width()/2;
-            int no_button_yPosition = 780;
-            no_button->setPos(no_button_xPosition, no_button_yPosition);//Dodać funkcję wykonującą akcję w zależności od rodzaju terenu
-
-            connect(yes_button, SIGNAL(clicked()), this, SLOT(buildOnTerrain()));
-            game->scene->addItem(yes_button);
-            connect(no_button, SIGNAL(clicked()), this, SLOT(buttonsDelete()));
-            game->scene->addItem(no_button);
+            index += 1;
+            game->currentPlayer = game->playersList[index];
         }
+        game->scene->update();
     }
+    else if(game->state == 2) //state == 2 - przemieszczanie jednostki
+    {
+        for(int i = 0; i < game->currentPlayer->unitList.count(); i++)
+        {
+            if(game->currentPlayer->unitList[i]->moving == true)
+            {
+                if(((abs(game->currentPlayer->unitList[i]->x_position - this->x_position)/40) <= game->currentPlayer->unitList[i]->range) && ((abs(game->currentPlayer->unitList[i]->y_position - this->y_position)/40) <= game->currentPlayer->unitList[i]->range))
+                {
+                    game->currentPlayer->unitList[i]->moving == false;
+                    qDebug()<< "PORUSZONO";
+                    game->tileList[game->currentPlayer->unitList[i]->position]->occupied = false;
+                    game->currentPlayer->unitList[i]->position = this->listLocation;
+                    game->currentPlayer->unitList[i]->setPos(this->x_position, this->y_position);
+                    game->currentPlayer->unitList[i]->x_position = this->x_position;
+                    game->currentPlayer->unitList[i]->y_position = this->y_position;
+                    game->currentPlayer->unitList[i]->selected = false;
+                    game->currentPlayer->unitList[i]->setPixmap(QPixmap(":img/img/worker.png"));
+                    game->currentPlayer->unitList[i]->occupiedTerrain = this->terrain;
+                    game->scene->removeItem(game->ruch);
+                    game->state = 1;
+                    occupied = true;
+                }
+                else
+                {
+                    qDebug()<< "JEDNOSTKA NIE MA TAKIEGO ZASIĘGU";
+                }
+            }
+        }
+    }   
 }
 
 void Tile::capture()
@@ -158,29 +206,44 @@ void Tile::capture()
 void Tile::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
 
-    if(occupied)
-    {       
-        Button* cit = new Button(QString("Miasto"));
-        int cit_xPosition = game->width()/2 - cit->boundingRect().width()/2;
-        int cit_yPosition = 275;
-        cit->setPos(cit_xPosition, cit_yPosition);
-        connect(cit, SIGNAL(clicked()), this, SLOT(checkClicked()));
-        //connect(cit, SIGNAL(clicked()), this, SLOT());
-        game->scene->addItem(cit);
+    if(occupied == true)
+    {
+        /*
+        if(terrain == "city")
+        {
+            Button * cit = new Button(QString("Miasto"));
+            int cit_xPosition = game->width()/2 - cit->boundingRect().width()/2;
+            int cit_yPosition = 275;
+            cit->setPos(cit_xPosition, cit_yPosition);
+            game->scene->addItem(cit);
 
-        Button* un = new Button(QString("Jednostka"));
-        int un_xPosition = game->width()/2 - un->boundingRect().width()/2;
-        int un_yPosition = 350;
-        un->setPos(un_xPosition, un_yPosition);
-        connect(un, SIGNAL(clicked()), this, SLOT(selectUnit()));
-        game->scene->addItem(un);
+            Button * un = new Button(QString("Jednostka"));
+            int un_xPosition = game->width()/2 - un->boundingRect().width()/2;
+            int un_yPosition = 350;
+            un->setPos(un_xPosition, un_yPosition);
+            game->scene->addItem(un);
 
+            connect(cit, SIGNAL(clicked()), this, SLOT(checkClicked()));
+            connect(cit, SIGNAL(clicked()), un, SLOT(deletingButton()));
+            connect(cit, SIGNAL(clicked()), cit, SLOT(deletingButton()));
+
+
+            connect(un, SIGNAL(clicked()), this, SLOT(selectUnit()));
+            connect(un, SIGNAL(clicked()), cit, SLOT(deletingButton()));
+            connect(un, SIGNAL(clicked()), un, SLOT(deletingButton()));
+        }
+        else
+        {
+            selectUnit();
+        }
+        */
+        selectUnit();
     }
     else
     {
         checkClicked();
-        game->play();
     }
-
+    qDebug() << occupied;
 }
+
 

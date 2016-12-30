@@ -10,7 +10,7 @@ class Unit:public QObject, public QGraphicsPixmapItem
 {
     Q_OBJECT
 public:
-    Unit(int X, int Y, QString Type, QString terrain);
+    Unit(int X, int Y, QString Type, QString terrain, QString owner, int where);
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
 
     void showActions();
@@ -21,15 +21,18 @@ public:
     int listLocation;
     int x_position;
     int y_position;
+    int position;
+    int range = 2;
+    bool moving;
 
 public slots:
     void selectUnit();
-    void selectCity();
     void move();
 
 
 private:
     QString type;
+    QString Owner;
 
 
 

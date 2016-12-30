@@ -13,8 +13,13 @@ public:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
+
 signals:
     void clicked();
+
+public slots:
+    void deletingButton();
+
 private:
     QGraphicsTextItem* text;
 };
