@@ -1,6 +1,7 @@
 #include "Game.h"
 
 #include <QGraphicsRectItem>
+#include <QMediaPlayer>
 #include <QDebug>
 
 
@@ -150,6 +151,34 @@ void Game::createUnit(int x, int y, QString type, QString terrain, QString owner
     scene->addItem(unit);
 }
 
+void Game::drawBorder()
+{
+    for(int i = 0; i < tileList.count(); i++)
+    {
+        if(tileList[i]->owner != "nobody")
+        {
+            scene->addItem(tileList[i]->border);
+        }
+        else
+        {
+            if(tileList[i]->borderExists == true)
+            {
+                scene->removeItem(tileList[i]->border);
+            }
+        }
+    }
+
+}
+
+void Game::checkWinner()
+{
+    if(playersList.size() == 1)
+    {
+        scene->clear();
+        QGraphicsTextItem* winner = new QGraphicsTextItem(QString("Wygrał " + playersList[0]->Name));
+        scene->addItem(winner);
+    }
+}
 
 void Game::start()
 {
@@ -165,6 +194,10 @@ void Game::start()
     state = 0;
     scene->addItem(this->polozenie);
     drawGUI(playerNumber);
+    QMediaPlayer * music = new QMediaPlayer;
+    music->setMedia(QUrl("qrc:/music/music/backgroundMusic.mp3"));
+    music->setVolume(100);
+    music->play();
 
 
 

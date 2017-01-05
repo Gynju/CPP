@@ -22,6 +22,8 @@ public:
     void play();
     void createUnit(int x, int y, QString type, QString terrain, QString owner, int where);
     void drawPanel(int x, int y, int width, int height, QColor color, double opacity, QString text);
+    void drawBorder();
+    void checkWinner();
 
     int resources[3];
     QString resourcesNames[3] = {"food", "wood", "stone"};

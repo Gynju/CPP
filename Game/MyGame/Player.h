@@ -2,6 +2,7 @@
 #include "Unit.h"
 #include "Building.h"
 #include "Recruiting.h"
+#include "City.h"
 
 #ifndef PLAYER_H
 #define PLAYER_H
@@ -15,12 +16,15 @@ public:
 
    int resources[3];
    int resourcesIncome[3];
+   int listLocation;
 
    QList<Unit *> unitList;
    QList<Tile *> tileList;
 
    QList<Building *> buildingList;
    QList<Recruiting *> recruitList;
+
+
 
    bool building = false;
    bool recruiting = false;

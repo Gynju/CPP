@@ -12,4 +12,7 @@
         <file>img/sawmill.png</file>
         <file>img/stonemason.png</file>
     </qresource>
+    <qresource prefix="/music">
+        <file>music/backgroundMusic.mp3</file>
+    </qresource>
 </RCC>

@@ -22,9 +22,15 @@ Tile::Tile(QString Terrain, int X, int Y)
         setPixmap(QPixmap(":img/img/forest.png"));
     }
     owner = "nobody";
+
     x_position = X;
     y_position = Y;
     occupied = false;
+    hasCity = false;
+    borderExists = false;
+
+    border = new QGraphicsRectItem(x_position, y_position, 40, 40);
+    border->setPen(QPen(Qt::red));
 }
 
 void Tile::buttonsDelete()
@@ -35,17 +41,13 @@ void Tile::buttonsDelete()
 
 void Tile::selectUnit()
 {
-    int index = 0;
     for(int i = 0; i < game->currentPlayer->unitList.count(); i++)
     {
         if(game->currentPlayer->unitList[i]->x_position == this->x_position && game->currentPlayer->unitList[i]->y_position == this->y_position)
         {
-            index = i;
-            qDebug()<< "LOL";
-            game->currentPlayer->unitList[index]->selectUnit();
+            game->currentPlayer->unitList[i]->selectUnit();
         }
     }
-
 }
 
 void Tile::buildOnTerrain()
@@ -66,35 +68,39 @@ void Tile::buildOnTerrain()
     buttonsDelete();
 }
 
-void Tile::drawBorder()
-{
-    for(int i = 0; i < game->tileList.count(); i++)
-    {
-        if(game->tileList[i]->owner != "nobody")
-        {
-            QGraphicsRectItem * rec = new QGraphicsRectItem(game->tileList[i]->x_position, game->tileList[i]->y_position, 40, 40);
-            rec->setPen(QPen(Qt::red));
-            game->scene->addItem(rec);
-        }
-    }
-
-}
-
 void Tile::setBorder()
 {
     QString owner = game->currentPlayer->Name;
     int i = this->listLocation;
+
     game->tileList[i+1]->owner = owner;
     game->tileList[i-1]->owner = owner;
+    game->tileList[i]->city->subjectedTilesLocation.append(game->tileList[i+1]->listLocation);
+    game->tileList[i]->city->subjectedTilesLocation.append(game->tileList[i-1]->listLocation);
+    game->tileList[i+1]->borderExists = true;
+    game->tileList[i-1]->borderExists = true;
 
     game->tileList[i+game->board->height]->owner = owner;
     game->tileList[i-game->board->height]->owner = owner;
+    game->tileList[i]->city->subjectedTilesLocation.append(game->tileList[i+game->board->height]->listLocation);
+    game->tileList[i]->city->subjectedTilesLocation.append(game->tileList[i-game->board->height]->listLocation);
+    game->tileList[i+game->board->height]->borderExists = true;
+    game->tileList[i-game->board->height]->borderExists = true;
 
     game->tileList[(i+game->board->height)-1]->owner = owner;
     game->tileList[(i-game->board->height)-1]->owner = owner;
+    game->tileList[i]->city->subjectedTilesLocation.append(game->tileList[(i+game->board->height)-1]->listLocation);
+    game->tileList[i]->city->subjectedTilesLocation.append(game->tileList[(i-game->board->height)-1]->listLocation);
+    game->tileList[(i+game->board->height)-1]->borderExists = true;
+    game->tileList[(i-game->board->height)-1]->borderExists = true;
 
     game->tileList[(i+game->board->height)+1]->owner = owner;
     game->tileList[(i-game->board->height)+1]->owner = owner;
+    game->tileList[i]->city->subjectedTilesLocation.append(game->tileList[(i+game->board->height)+1]->listLocation);
+    game->tileList[i]->city->subjectedTilesLocation.append(game->tileList[(i-game->board->height)+1]->listLocation);
+    game->tileList[(i+game->board->height)+1]->borderExists = true;
+    game->tileList[(i-game->board->height)+1]->borderExists = true;
+
 }
 
 void Tile::settingCity()
@@ -117,16 +123,29 @@ void Tile::settingCity()
             game->currentPlayer->resourcesIncome[1] = 5;
             game->currentPlayer->resourcesIncome[2] = 1;
         }
+
+        //terrain = "city";
+        city = new City();
+        city->X = this->x_position;
+        city->Y = this->y_position;
+        city->listLocation = this->listLocation;
+
         owner = game->currentPlayer->Name;
-        terrain = "city";
-        game->currentPlayer->city_X = this->x_position;
-        game->currentPlayer->city_Y = this->y_position;
-        game->currentPlayer->cityListLocation = this->listLocation;
+        city->owner = game->currentPlayer->Name;
+
+        game->currentPlayer->city_X = city->X;
+        game->currentPlayer->city_Y = city->Y;
+        game->currentPlayer->cityListLocation = city->listLocation;
+
+        borderExists = true;
         setBorder();
-        drawBorder();
+        game->drawBorder();
         setPixmap(QPixmap(":img/img/town.png"));
-        game->createUnit(this->x_position, this->y_position, "worker", this->terrain, game->currentPlayer->Name, this->listLocation);
+        game->createUnit(city->X, city->Y, "worker", this->terrain, game->currentPlayer->Name, this->listLocation);
+        city->occupied = true;
         occupied = true;
+        hasCity = true;
+
     }
 }
 
@@ -161,19 +180,31 @@ void Tile::checkClicked()
             {
                 if(((abs(game->currentPlayer->unitList[i]->x_position - this->x_position)/40) <= game->currentPlayer->unitList[i]->range) && ((abs(game->currentPlayer->unitList[i]->y_position - this->y_position)/40) <= game->currentPlayer->unitList[i]->range))
                 {
+                    if(hasCity == true)
+                    {
+                        if(city->owner != game->currentPlayer->Name)
+                        {
+                            city->hp--;
+                            city->checkHP();
+                        }
+                    }
+                    else
+                    {
+
+                        qDebug()<< "PORUSZONO";
+                        game->tileList[game->currentPlayer->unitList[i]->position]->occupied = false;
+                        game->currentPlayer->unitList[i]->position = this->listLocation;
+                        game->currentPlayer->unitList[i]->setPos(this->x_position, this->y_position);
+                        game->currentPlayer->unitList[i]->x_position = this->x_position;
+                        game->currentPlayer->unitList[i]->y_position = this->y_position;
+                        game->currentPlayer->unitList[i]->occupiedTerrain = this->terrain;
+                        occupied = true;
+                    }
                     game->currentPlayer->unitList[i]->moving == false;
-                    qDebug()<< "PORUSZONO";
-                    game->tileList[game->currentPlayer->unitList[i]->position]->occupied = false;
-                    game->currentPlayer->unitList[i]->position = this->listLocation;
-                    game->currentPlayer->unitList[i]->setPos(this->x_position, this->y_position);
-                    game->currentPlayer->unitList[i]->x_position = this->x_position;
-                    game->currentPlayer->unitList[i]->y_position = this->y_position;
                     game->currentPlayer->unitList[i]->selected = false;
                     game->currentPlayer->unitList[i]->setPixmap(QPixmap(":img/img/worker.png"));
-                    game->currentPlayer->unitList[i]->occupiedTerrain = this->terrain;
                     game->scene->removeItem(game->ruch);
                     game->state = 1;
-                    occupied = true;
                 }
                 else
                 {
@@ -208,42 +239,13 @@ void Tile::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
     if(occupied == true)
     {
-        /*
-        if(terrain == "city")
-        {
-            Button * cit = new Button(QString("Miasto"));
-            int cit_xPosition = game->width()/2 - cit->boundingRect().width()/2;
-            int cit_yPosition = 275;
-            cit->setPos(cit_xPosition, cit_yPosition);
-            game->scene->addItem(cit);
-
-            Button * un = new Button(QString("Jednostka"));
-            int un_xPosition = game->width()/2 - un->boundingRect().width()/2;
-            int un_yPosition = 350;
-            un->setPos(un_xPosition, un_yPosition);
-            game->scene->addItem(un);
-
-            connect(cit, SIGNAL(clicked()), this, SLOT(checkClicked()));
-            connect(cit, SIGNAL(clicked()), un, SLOT(deletingButton()));
-            connect(cit, SIGNAL(clicked()), cit, SLOT(deletingButton()));
-
-
-            connect(un, SIGNAL(clicked()), this, SLOT(selectUnit()));
-            connect(un, SIGNAL(clicked()), cit, SLOT(deletingButton()));
-            connect(un, SIGNAL(clicked()), un, SLOT(deletingButton()));
-        }
-        else
-        {
-            selectUnit();
-        }
-        */
         selectUnit();
     }
     else
     {
         checkClicked();
     }
-    qDebug() << occupied;
+    qDebug() << owner;
 }
 
 

@@ -6,6 +6,7 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QObject>
 #include "Button.h"
+#include "City.h"
 
 class Tile: public QObject, public QGraphicsPixmapItem
 {
@@ -17,7 +18,6 @@ public:
 
     void capture();
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
-    void drawBorder();
     void setBorder();
     void settingCity();
 
@@ -25,17 +25,23 @@ public:
     QString owner;
     Button * yes_button;
     Button * no_button;
+
+    QGraphicsRectItem * border;
+
     bool occupied;
+    bool hasCity;
+    bool borderExists;
     int listLocation;
     int x_position;
     int y_position;
+
+    City* city;
 
 
 public slots:
     void buildOnTerrain();
     void buttonsDelete();
     void selectUnit();
-
     void checkClicked();
 
 
