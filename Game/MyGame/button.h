@@ -4,24 +4,25 @@
 #include <QGraphicsRectItem>
 #include <QGraphicsSceneMouseEvent>
 
-
 class Button: public QObject, public QGraphicsRectItem
 {
     Q_OBJECT
 public:
-    Button(QString name, QGraphicsItem* parent=NULL);
-    void mousePressEvent(QGraphicsSceneMouseEvent *event);
+    Button(QString name, QString Color, QGraphicsItem* parent=NULL);
     void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
+    void mousePressEvent(QGraphicsSceneMouseEvent *event);
 
-signals:
-    void clicked();
+    QString color;
 
 public slots:
     void deletingButton();
 
 private:
     QGraphicsTextItem* text;
+
+signals:
+    void clicked();
 };
 
 #endif // BUTTON_H

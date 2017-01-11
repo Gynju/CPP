@@ -1,41 +1,36 @@
-#include "Tile.h"
-#include "Unit.h"
-#include "Building.h"
-#include "Recruiting.h"
-#include "City.h"
-
 #ifndef PLAYER_H
 #define PLAYER_H
+
+#include "Building.h"
+#include "City.h"
+#include "Recruiting.h"
+#include "Tile.h"
+#include "Unit.h"
 
 class Player
 {
 public:
    Player(QString name, int food, int wood, int stone);
+   void update();
+   void updateIcons(int list_position);
+   void updateText();
 
-   QString Name;
-
+   int city_list_location;
+   int city_X;
+   int city_Y;
+   int list_location;
    int resources[3];
-   int resourcesIncome[3];
-   int listLocation;
-
-   QList<Unit *> unitList;
-   QList<Tile *> tileList;
-
-   QList<Building *> buildingList;
-   QList<Recruiting *> recruitList;
-
-
+   int resources_income[3];
 
    bool building = false;
    bool recruiting = false;
 
-   int city_X;
-   int city_Y;
-   int cityListLocation;
+   QList<Unit *> unit_list;
+   QList<Tile *> tile_list;
+   QList<Building *> building_list;
+   QList<Recruiting *> recruit_list;
 
-   void update();
-   void updateText();
-   void updateIcons(int listPosition);
+   QString Name;
 };
 
 #endif // PLAYER_H

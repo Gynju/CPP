@@ -2,9 +2,11 @@
 #define UNIT_H
 
 #include <QGraphicsPixmapItem>
-#include <QGraphicsSceneMouseEvent>
 #include <QGraphicsRectItem>
+#include <QGraphicsSceneMouseEvent>
 #include <QObject>
+
+#include "Button.h"
 
 class Unit:public QObject, public QGraphicsPixmapItem
 {
@@ -12,30 +14,33 @@ class Unit:public QObject, public QGraphicsPixmapItem
 public:
     Unit(int X, int Y, QString Type, QString terrain, QString owner, int where);
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
-
     void showActions();
 
-
-    QString occupiedTerrain;
-    bool selected;
-    int listLocation;
+    int list_location;
+    int move_limit;
+    int position;
+    int range;
     int x_position;
     int y_position;
-    int position;
-    int range = 2;
+
+    bool greyed_exist;
+    bool move_exist;
     bool moving;
+    bool selected;
+
+    Button * move_button;
+    Button * greyed;
+
+    QString occupied_terrain;
 
 public slots:
-    void selectUnit();
+    void deselection();
     void move();
-
+    void selectUnit();
 
 private:
-    QString type;
     QString Owner;
-
-
-
+    QString type;
 };
 
 #endif // UNIT_H

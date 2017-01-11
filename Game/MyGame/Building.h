@@ -3,6 +3,7 @@
 
 #include <QGraphicsPixmapItem>
 #include <QGraphicsSceneMouseEvent>
+
 #include "Button.h"
 
 class Building: public QObject, public QGraphicsPixmapItem
@@ -10,14 +11,14 @@ class Building: public QObject, public QGraphicsPixmapItem
     Q_OBJECT
 public:
     Building(QString Variant);
-    int buildingTime;
-    bool built = false;
-    bool buttonsExist = false;
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
+    void updateIcon();
 
     int bonus;
+    int building_time;
 
-    void updateIcon();
+    bool built = false;
+
     QString variant;
 
 public slots:
@@ -25,7 +26,6 @@ public slots:
     void changeButtonStatus();
 
 private:
-
     int cost[3] = {0,0,0};
 
 };

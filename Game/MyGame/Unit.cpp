@@ -1,14 +1,17 @@
-#include "Unit.h"
 #include "Game.h"
+#include "Unit.h"
 #include "Tile.h"
-#include <QDebug>
 
 extern Game * game;
 extern Tile * tile;
 
 Unit::Unit(int X, int Y, QString Type, QString terrain, QString owner, int where)
 {
-
+    moving = false;
+    range = 2;
+    greyed_exist = false;
+    move_exist = false;
+    move_limit = 1;
     Owner = owner;
     setPixmap(QPixmap(":img/img/worker.png"));
     x_position = X;
@@ -16,74 +19,67 @@ Unit::Unit(int X, int Y, QString Type, QString terrain, QString owner, int where
     position = where;
     QRect(x_position, y_position, 40, 40);
     type = Type;
-    occupiedTerrain = terrain;
+    occupied_terrain = terrain;
     selected = false;
 }
 
-void Unit::move()
+void Unit::deselection()
 {
-    this->moving = true;
-    game->scene->addItem(game->ruch);
-    game->state = 2;
-    qDebug() << "wololo";
-}
-
-
-void Unit::showActions()
-{
-    Button * move = new Button(QString("Wykonanie ruchu"));
-    int move_xPosition = 100;
-    int move_yPosition = 100;
-    move->setPos(move_xPosition, move_yPosition);
-    connect(move, SIGNAL(clicked()), this, SLOT(move()));
-    connect(move, SIGNAL(clicked()), move, SLOT(deletingButton()));
-    game->scene->addItem(move);
-}
-
-
-void Unit::selectUnit()
-{
-    this->selected = true;
-    this->setPixmap(QPixmap(":img/img/selected_worker.png"));
-    this->showActions();
+    selected = false;
+    setPixmap(QPixmap(":img/img/worker.png"));
+    if(greyed_exist)
+    {
+        greyed_exist = false;
+        greyed->deletingButton();
+    }
+    if(move_exist)
+    {
+        move_exist = false;
+        move_button->deletingButton();
+    }
 }
 
 void Unit::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
+    if(game->current_player->Name == Owner)
+    game->current_player->unit_list[list_location]->selectUnit();
+}
 
-    /*
-    if(occupiedTerrain == "city")
+void Unit::move()
+{
+    game->current_player->unit_list[list_location]->moving = true;
+    game->scene->addItem(game->ruch);
+    game->state = 2;
+}
+
+void Unit::selectUnit()
+{
+    game->current_player->unit_list[list_location]->selected = true;
+    game->current_player->unit_list[list_location]->setPixmap(QPixmap(":img/img/selected_worker.png"));
+    game->current_player->unit_list[list_location]->showActions();
+}
+
+void Unit::showActions()
+{
+    if(move_limit > 0)
     {
-        Button * cit = new Button(QString("Miasto"));
-        int cit_xPosition = game->width()/2 - cit->boundingRect().width()/2;
-        int cit_yPosition = 275;
-        cit->setPos(cit_xPosition, cit_yPosition);
-        game->scene->addItem(cit);
-
-        Button * un = new Button(QString("Jednostka"));
-        int un_xPosition = game->width()/2 - un->boundingRect().width()/2;
-        int un_yPosition = 350;
-        un->setPos(un_xPosition, un_yPosition);
-        game->scene->addItem(un);
-
-        connect(cit, SIGNAL(clicked()), this, SLOT(selectCity()));
-        connect(cit, SIGNAL(clicked()), un, SLOT(deletingButton()));
-        connect(cit, SIGNAL(clicked()), cit, SLOT(deletingButton()));
-
-        connect(un, SIGNAL(clicked()), this, SLOT(selectUnit()));
-        connect(un, SIGNAL(clicked()), cit, SLOT(deletingButton()));
-        connect(un, SIGNAL(clicked()), un, SLOT(deletingButton()));
-
+        move_exist = true;
+        move_button = new Button("Wykonanie ruchu", "green");
+        move_button->setPos(100, 100);
+        connect(move_button, SIGNAL(clicked()), this, SLOT(move()));
+        connect(move_button, SIGNAL(clicked()), this, SLOT(deselection()));
+        game->scene->addItem(move_button);
     }
     else
     {
-
-        selectUnit();
+        if(greyed_exist != true)
+        {
+            greyed_exist = true;
+            greyed = new Button("Limit ruchu wyczerpany", "gray");
+            greyed->setPos(100, 100);
+            game->scene->addItem(greyed);
+        }
     }
-    */
-    if(game->currentPlayer->Name == Owner)
-    this->selectUnit();
-
 }
 
 

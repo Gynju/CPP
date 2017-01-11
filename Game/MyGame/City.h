@@ -7,21 +7,21 @@ class City
 {
 public:
    City();
+   void checkHP();
    void mousePressEvent(QGraphicsSceneMouseEvent *event);
    void selectUnit();
-   void checkHP();
 
    int hp;
-
-   bool occupied;
-   QString owner;
-
-   QList<int> subjectedTilesLocation;
-
+   int list_location;
+   int player_list_location;
    int X;
    int Y;
-   int listLocation;
-   int playerListLocation;
+
+   bool occupied;
+
+   QString owner;
+   QList<int> subjected_tiles_location;
+
 };
 
 #endif // CITY_H

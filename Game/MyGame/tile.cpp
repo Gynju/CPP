@@ -1,7 +1,7 @@
-#include "Tile.h"
-#include "Game.h"
 #include <QPainter>
-#include <QDebug>
+
+#include "Game.h"
+#include "Tile.h"
 
 extern Game * game;
 extern Unit * unit;
@@ -26,11 +26,16 @@ Tile::Tile(QString Terrain, int X, int Y)
     x_position = X;
     y_position = Y;
     occupied = false;
-    hasCity = false;
-    borderExists = false;
+    has_city = false;
+    border_exists = false;
 
     border = new QGraphicsRectItem(x_position, y_position, 40, 40);
-    border->setPen(QPen(Qt::red));
+    border->setPen(QPen(Qt::black));
+}
+
+void Tile::buildOnTerrain()
+{
+    buttonsDelete();
 }
 
 void Tile::buttonsDelete()
@@ -39,204 +44,128 @@ void Tile::buttonsDelete()
     delete no_button;
 }
 
-void Tile::selectUnit()
-{
-    for(int i = 0; i < game->currentPlayer->unitList.count(); i++)
-    {
-        if(game->currentPlayer->unitList[i]->x_position == this->x_position && game->currentPlayer->unitList[i]->y_position == this->y_position)
-        {
-            game->currentPlayer->unitList[i]->selectUnit();
-        }
-    }
-}
-
-void Tile::buildOnTerrain()
-{
-    /*if(game->possibleActions > 0)
-    {
-        owner = "player";
-        terrain = "city";
-        setPixmap(QPixmap(":img/img/town.png"));
-        game->possibleActions--;
-
-    }
-    else
-    {
-        qDebug()<<"Nie masz więcej akcji";
-        capture();
-    }*/
-    buttonsDelete();
-}
-
-void Tile::setBorder()
-{
-    QString owner = game->currentPlayer->Name;
-    int i = this->listLocation;
-
-    game->tileList[i+1]->owner = owner;
-    game->tileList[i-1]->owner = owner;
-    game->tileList[i]->city->subjectedTilesLocation.append(game->tileList[i+1]->listLocation);
-    game->tileList[i]->city->subjectedTilesLocation.append(game->tileList[i-1]->listLocation);
-    game->tileList[i+1]->borderExists = true;
-    game->tileList[i-1]->borderExists = true;
-
-    game->tileList[i+game->board->height]->owner = owner;
-    game->tileList[i-game->board->height]->owner = owner;
-    game->tileList[i]->city->subjectedTilesLocation.append(game->tileList[i+game->board->height]->listLocation);
-    game->tileList[i]->city->subjectedTilesLocation.append(game->tileList[i-game->board->height]->listLocation);
-    game->tileList[i+game->board->height]->borderExists = true;
-    game->tileList[i-game->board->height]->borderExists = true;
-
-    game->tileList[(i+game->board->height)-1]->owner = owner;
-    game->tileList[(i-game->board->height)-1]->owner = owner;
-    game->tileList[i]->city->subjectedTilesLocation.append(game->tileList[(i+game->board->height)-1]->listLocation);
-    game->tileList[i]->city->subjectedTilesLocation.append(game->tileList[(i-game->board->height)-1]->listLocation);
-    game->tileList[(i+game->board->height)-1]->borderExists = true;
-    game->tileList[(i-game->board->height)-1]->borderExists = true;
-
-    game->tileList[(i+game->board->height)+1]->owner = owner;
-    game->tileList[(i-game->board->height)+1]->owner = owner;
-    game->tileList[i]->city->subjectedTilesLocation.append(game->tileList[(i+game->board->height)+1]->listLocation);
-    game->tileList[i]->city->subjectedTilesLocation.append(game->tileList[(i-game->board->height)+1]->listLocation);
-    game->tileList[(i+game->board->height)+1]->borderExists = true;
-    game->tileList[(i-game->board->height)+1]->borderExists = true;
-
-}
-
-void Tile::settingCity()
-{
-    if(terrain == "water")
-    {
-        qDebug() << "Nie można postawić miasta na wodzie";
-    }
-    else
-    {
-        if(terrain == "fields")
-        {
-            game->currentPlayer->resourcesIncome[0] = 5;
-            game->currentPlayer->resourcesIncome[1] = 1;
-            game->currentPlayer->resourcesIncome[2] = 1;
-        }
-        else if(terrain == "forest")
-        {
-            game->currentPlayer->resourcesIncome[0] = 1;
-            game->currentPlayer->resourcesIncome[1] = 5;
-            game->currentPlayer->resourcesIncome[2] = 1;
-        }
-
-        //terrain = "city";
-        city = new City();
-        city->X = this->x_position;
-        city->Y = this->y_position;
-        city->listLocation = this->listLocation;
-
-        owner = game->currentPlayer->Name;
-        city->owner = game->currentPlayer->Name;
-
-        game->currentPlayer->city_X = city->X;
-        game->currentPlayer->city_Y = city->Y;
-        game->currentPlayer->cityListLocation = city->listLocation;
-
-        borderExists = true;
-        setBorder();
-        game->drawBorder();
-        setPixmap(QPixmap(":img/img/town.png"));
-        game->createUnit(city->X, city->Y, "worker", this->terrain, game->currentPlayer->Name, this->listLocation);
-        city->occupied = true;
-        occupied = true;
-        hasCity = true;
-
-    }
-}
-
 void Tile::checkClicked()
 {
 
     if (game->state == 0)//state = 0 - rozpoczynanie gry
     {
         int index = 0;
-        settingCity();
+        checkTerrain();
 
-        if(game->currentPlayer == game->playersList[game->playersList.size()-1])
+        if(game->current_player == game->players_list[game->players_list.size()-1])
         {
-            game->currentPlayer = game->playersList[0];
+            game->current_player = game->players_list[0];
             game->scene->removeItem(game->polozenie);
             game->state = 1;
-            game->scene->addItem(game->next_Turn);
+            game->scene->addItem(game->next_turn);
 
         }
         else
         {
             index += 1;
-            game->currentPlayer = game->playersList[index];
+            game->current_player = game->players_list[index];
         }
         game->scene->update();
     }
+    else if(game->state == 1)
+    {
+        for(int i = 0; i < game->current_player->unit_list.count(); i++)
+        {
+            if(game->current_player->unit_list[i]->selected == true)
+            {
+                game->current_player->unit_list[i]->deselection();
+            }
+        }
+    }
     else if(game->state == 2) //state == 2 - przemieszczanie jednostki
     {
-        for(int i = 0; i < game->currentPlayer->unitList.count(); i++)
+        for(int i = 0; i < game->current_player->unit_list.count(); i++)
         {
-            if(game->currentPlayer->unitList[i]->moving == true)
+            if(game->current_player->unit_list[i]->moving == true)
             {
-                if(((abs(game->currentPlayer->unitList[i]->x_position - this->x_position)/40) <= game->currentPlayer->unitList[i]->range) && ((abs(game->currentPlayer->unitList[i]->y_position - this->y_position)/40) <= game->currentPlayer->unitList[i]->range))
+                if(((abs(game->current_player->unit_list[i]->x_position - this->x_position)/40) <= game->current_player->unit_list[i]->range) && ((abs(game->current_player->unit_list[i]->y_position - this->y_position)/40) <= game->current_player->unit_list[i]->range))
                 {
-                    if(hasCity == true)
+                    if(terrain != "water")
                     {
-                        if(city->owner != game->currentPlayer->Name)
+                        game->state = 1;
+                        if(has_city == true)
                         {
-                            city->hp--;
-                            city->checkHP();
+                            if(city->owner != game->current_player->Name)
+                            {
+                                city->hp--;
+                                city->checkHP();
+                            }
                         }
+                        else
+                        {
+                            game->showMessage("Przemieszczono jednostkę");
+                            game->current_player->unit_list[i]->move_limit -= 1;
+                            game->tile_list[game->current_player->unit_list[i]->position]->occupied = false;
+                            game->current_player->unit_list[i]->position = this->list_location;
+                            game->current_player->unit_list[i]->setPos(this->x_position, this->y_position);
+                            game->current_player->unit_list[i]->x_position = this->x_position;
+                            game->current_player->unit_list[i]->y_position = this->y_position;
+                            game->current_player->unit_list[i]->occupied_terrain = this->terrain;
+                            occupied = true;
+                            game->current_player->unit_list[i]->moving = false;
+                            game->current_player->unit_list[i]->deselection();
+                            game->scene->removeItem(game->ruch);
+                        }
+
                     }
                     else
                     {
-
-                        qDebug()<< "PORUSZONO";
-                        game->tileList[game->currentPlayer->unitList[i]->position]->occupied = false;
-                        game->currentPlayer->unitList[i]->position = this->listLocation;
-                        game->currentPlayer->unitList[i]->setPos(this->x_position, this->y_position);
-                        game->currentPlayer->unitList[i]->x_position = this->x_position;
-                        game->currentPlayer->unitList[i]->y_position = this->y_position;
-                        game->currentPlayer->unitList[i]->occupiedTerrain = this->terrain;
-                        occupied = true;
+                        game->showMessage("Nie można przemieścić jednostki na wodę.");
                     }
-                    game->currentPlayer->unitList[i]->moving == false;
-                    game->currentPlayer->unitList[i]->selected = false;
-                    game->currentPlayer->unitList[i]->setPixmap(QPixmap(":img/img/worker.png"));
-                    game->scene->removeItem(game->ruch);
-                    game->state = 1;
                 }
                 else
                 {
-                    qDebug()<< "JEDNOSTKA NIE MA TAKIEGO ZASIĘGU";
+                    game->showMessage("JEDNOSTKA NIE MA TAKIEGO ZASIĘGU");
                 }
             }
         }
-    }   
+    }
 }
 
-void Tile::capture()
+void Tile::checkTerrain()
 {
-    if(owner=="nobody")
+    if(terrain == "water")
     {
-        setPixmap(QPixmap(":img/img/players_fields.png"));
-        qDebug() << "Przejęto teren";
-        owner = "player";
-    }
-    else if(owner=="player")
-    {
-        qDebug() << "Teren jest już przez Ciebie zajęty";
+        game->showMessage("Nie można postawić miasta na wodzie.");
     }
     else
     {
-
+        if(terrain == "fields")
+        {
+            game->current_player->resources_income[0] = 5;
+            game->current_player->resources_income[1] = 1;
+            game->current_player->resources_income[2] = 1;
+            settingCity();
+        }
+        else if(terrain == "forest")
+        {
+            game->current_player->resources_income[0] = 1;
+            game->current_player->resources_income[1] = 5;
+            game->current_player->resources_income[2] = 1;
+            settingCity();
+        }
     }
 }
 
+void Tile::colorBorder(QString who_own)
+{
+    if(who_own == "Player 1")
+    {
+        border->setPen(QPen(Qt::red));
+    }
+    else
+    {
+        border->setPen(QPen(Qt::yellow));
+    }
+}
 
 void Tile::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-
     if(occupied == true)
     {
         selectUnit();
@@ -245,7 +174,85 @@ void Tile::mousePressEvent(QGraphicsSceneMouseEvent *event)
     {
         checkClicked();
     }
-    qDebug() << owner;
 }
+
+void Tile::selectUnit()
+{
+    for(int i = 0; i < game->current_player->unit_list.count(); i++)
+    {
+        if(game->current_player->unit_list[i]->x_position == this->x_position && game->current_player->unit_list[i]->y_position == this->y_position)
+        {
+            game->current_player->unit_list[i]->selectUnit();
+        }
+    }
+}
+
+void Tile::setBorder()
+{
+    QString owner = game->current_player->Name;
+    int i = this->list_location;
+
+    game->tile_list[i+1]->owner = owner;
+    game->tile_list[i-1]->owner = owner;
+    game->tile_list[i]->city->subjected_tiles_location.append(game->tile_list[i+1]->list_location);
+    game->tile_list[i]->city->subjected_tiles_location.append(game->tile_list[i-1]->list_location);
+    game->tile_list[i+1]->border_exists = true;
+    game->tile_list[i-1]->border_exists = true;
+    game->tile_list[i+1]->colorBorder(owner);
+    game->tile_list[i-1]->colorBorder(owner);
+
+    game->tile_list[i+game->board->height]->owner = owner;
+    game->tile_list[i-game->board->height]->owner = owner;
+    game->tile_list[i]->city->subjected_tiles_location.append(game->tile_list[i+game->board->height]->list_location);
+    game->tile_list[i]->city->subjected_tiles_location.append(game->tile_list[i-game->board->height]->list_location);
+    game->tile_list[i+game->board->height]->border_exists = true;
+    game->tile_list[i-game->board->height]->border_exists = true;
+    game->tile_list[i+game->board->height]->colorBorder(owner);
+    game->tile_list[i-game->board->height]->colorBorder(owner);
+
+    game->tile_list[(i+game->board->height)-1]->owner = owner;
+    game->tile_list[(i-game->board->height)-1]->owner = owner;
+    game->tile_list[i]->city->subjected_tiles_location.append(game->tile_list[(i+game->board->height)-1]->list_location);
+    game->tile_list[i]->city->subjected_tiles_location.append(game->tile_list[(i-game->board->height)-1]->list_location);
+    game->tile_list[(i+game->board->height)-1]->border_exists = true;
+    game->tile_list[(i-game->board->height)-1]->border_exists = true;
+    game->tile_list[(i+game->board->height)-1]->colorBorder(owner);
+    game->tile_list[(i-game->board->height)-1]->colorBorder(owner);
+
+    game->tile_list[(i+game->board->height)+1]->owner = owner;
+    game->tile_list[(i-game->board->height)+1]->owner = owner;
+    game->tile_list[i]->city->subjected_tiles_location.append(game->tile_list[(i+game->board->height)+1]->list_location);
+    game->tile_list[i]->city->subjected_tiles_location.append(game->tile_list[(i-game->board->height)+1]->list_location);
+    game->tile_list[(i+game->board->height)+1]->border_exists = true;
+    game->tile_list[(i-game->board->height)+1]->border_exists = true;
+    game->tile_list[(i+game->board->height)+1]->colorBorder(owner);
+    game->tile_list[(i-game->board->height)+1]->colorBorder(owner);
+}
+
+void Tile::settingCity()
+{
+    city = new City();
+    city->X = this->x_position;
+    city->Y = this->y_position;
+    city->list_location = this->list_location;
+
+    owner = game->current_player->Name;
+    city->owner = owner;
+
+    game->current_player->city_X = city->X;
+    game->current_player->city_Y = city->Y;
+    game->current_player->city_list_location = city->list_location;
+
+    colorBorder(owner);
+    border_exists = true;
+    setBorder();
+    game->drawBorder();
+    setPixmap(QPixmap(":img/img/town.png"));
+    game->createUnit(city->X, city->Y, "worker", this->terrain, owner, this->list_location);
+    city->occupied = true;
+    occupied = true;
+    has_city = true;
+}
+
 
 

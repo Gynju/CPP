@@ -1,15 +1,22 @@
-#include "Button.h"
-#include <QGraphicsTextItem>
 #include <QBrush>
+#include <QGraphicsTextItem>
 
+#include "Button.h"
 
-
-Button::Button(QString name, QGraphicsItem *parent): QGraphicsRectItem(parent)
+Button::Button(QString name, QString Color, QGraphicsItem *parent): QGraphicsRectItem(parent)
 {
+    color = Color;
     setRect(0,0,200,50);
     QBrush brush;
     brush.setStyle(Qt::SolidPattern);
-    brush.setColor(Qt::green);
+    if(Color == "gray")
+    {
+    brush.setColor(Qt::gray);
+    }
+    else
+    {
+        brush.setColor(Qt::green);
+    }
     setBrush(brush);
 
     text = new QGraphicsTextItem(name, this);
@@ -20,16 +27,23 @@ Button::Button(QString name, QGraphicsItem *parent): QGraphicsRectItem(parent)
     setAcceptHoverEvents(true);
 }
 
-void Button::mousePressEvent(QGraphicsSceneMouseEvent *event)
+void Button::deletingButton()
 {
-    emit clicked();
+    delete this;
 }
 
 void Button::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
     QBrush brush;
     brush.setStyle(Qt::SolidPattern);
-    brush.setColor(Qt::darkGreen);
+    if(color == "gray")
+    {
+        brush.setColor(Qt::darkGray);
+    }
+    else
+    {
+        brush.setColor(Qt::darkGreen);
+    }
     setBrush(brush);
 }
 
@@ -37,11 +51,18 @@ void Button::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
     QBrush brush;
     brush.setStyle(Qt::SolidPattern);
-    brush.setColor(Qt::green);
+    if(color == "gray")
+    {
+        brush.setColor(Qt::gray);
+    }
+    else
+    {
+        brush.setColor(Qt::green);
+    }
     setBrush(brush);
 }
 
-void Button::deletingButton()
+void Button::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    delete this;
+    emit clicked();
 }
