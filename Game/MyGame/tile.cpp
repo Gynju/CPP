@@ -8,6 +8,8 @@ extern Unit * unit;
 
 Tile::Tile(QString Terrain, int X, int Y)
 {
+    continue_loop = false;
+    index = 0;
     terrain = Terrain;
     if (terrain == "water")
     {
@@ -49,21 +51,23 @@ void Tile::checkClicked()
 
     if (game->state == 0)//state = 0 - rozpoczynanie gry
     {
-        int index = 0;
+
         checkTerrain();
 
-        if(game->current_player == game->players_list[game->players_list.size()-1])
+        if(game->current_player == game->players_list[game->players_list.size()-1] && continue_loop == true)
         {
             game->current_player = game->players_list[0];
             game->scene->removeItem(game->polozenie);
             game->state = 1;
             game->scene->addItem(game->next_turn);
-
         }
         else
         {
-            index += 1;
-            game->current_player = game->players_list[index];
+            if(continue_loop == true)
+            {
+                index += 1;
+                game->current_player = game->players_list[index];
+            }
         }
         game->scene->update();
     }
@@ -96,22 +100,19 @@ void Tile::checkClicked()
                                 city->checkHP();
                             }
                         }
-                        else
-                        {
-                            game->showMessage("Przemieszczono jednostkę");
-                            game->current_player->unit_list[i]->move_limit -= 1;
-                            game->tile_list[game->current_player->unit_list[i]->position]->occupied = false;
-                            game->current_player->unit_list[i]->position = this->list_location;
-                            game->current_player->unit_list[i]->setPos(this->x_position, this->y_position);
-                            game->current_player->unit_list[i]->x_position = this->x_position;
-                            game->current_player->unit_list[i]->y_position = this->y_position;
-                            game->current_player->unit_list[i]->occupied_terrain = this->terrain;
-                            occupied = true;
-                            game->current_player->unit_list[i]->moving = false;
-                            game->current_player->unit_list[i]->deselection();
-                            game->scene->removeItem(game->ruch);
-                        }
-
+                        game->showMessage("Przemieszczono jednostkę");
+                        game->current_player->unit_list[i]->move_limit -= 1;
+                        game->tile_list[game->current_player->unit_list[i]->position]->occupied = false;
+                        game->current_player->unit_list[i]->position = this->list_location;
+                        game->current_player->unit_list[i]->setPos(this->x_position, this->y_position);
+                        game->current_player->unit_list[i]->x_position = this->x_position;
+                        game->current_player->unit_list[i]->y_position = this->y_position;
+                        game->current_player->unit_list[i]->occupied_terrain = this->terrain;
+                        occupied = true;
+                        occupied_by = game->current_player->unit_list[i];
+                        game->current_player->unit_list[i]->moving = false;
+                        game->current_player->unit_list[i]->deselection();
+                        game->scene->removeItem(game->ruch);
                     }
                     else
                     {
@@ -132,23 +133,17 @@ void Tile::checkTerrain()
     if(terrain == "water")
     {
         game->showMessage("Nie można postawić miasta na wodzie.");
+        continue_loop = false;
+    }
+    else if(game->current_player->list_location > 0 && (((abs(this->x_position - game->players_list[game->current_player->list_location-1]->city_X))/40 < 3) && ((abs(this->y_position - game->players_list[game->current_player->list_location-1]->city_Y))/40 < 3)))
+    {
+        game->showMessage("Nie można postawić miasta zbyt blisko miasta przeciwnika.");
+        continue_loop = false;
     }
     else
     {
-        if(terrain == "fields")
-        {
-            game->current_player->resources_income[0] = 5;
-            game->current_player->resources_income[1] = 1;
-            game->current_player->resources_income[2] = 1;
-            settingCity();
-        }
-        else if(terrain == "forest")
-        {
-            game->current_player->resources_income[0] = 1;
-            game->current_player->resources_income[1] = 5;
-            game->current_player->resources_income[2] = 1;
-            settingCity();
-        }
+        settingCity();
+        continue_loop = true;
     }
 }
 
@@ -161,6 +156,22 @@ void Tile::colorBorder(QString who_own)
     else
     {
         border->setPen(QPen(Qt::yellow));
+    }
+}
+
+void Tile::grantResourceIncome()
+{
+    if(terrain == "fields")
+    {
+        game->current_player->resources_income[0] = 5;
+        game->current_player->resources_income[1] = 1;
+        game->current_player->resources_income[2] = 1;
+    }
+    else if(terrain == "forest")
+    {
+        game->current_player->resources_income[0] = 1;
+        game->current_player->resources_income[1] = 5;
+        game->current_player->resources_income[2] = 1;
     }
 }
 
@@ -231,6 +242,7 @@ void Tile::setBorder()
 
 void Tile::settingCity()
 {
+    grantResourceIncome();
     city = new City();
     city->X = this->x_position;
     city->Y = this->y_position;

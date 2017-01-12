@@ -1,5 +1,6 @@
 #include <ctime>
 #include <QApplication>
+#include <QDebug>
 
 #include "Game.h"
 

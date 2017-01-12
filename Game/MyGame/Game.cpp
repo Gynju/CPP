@@ -49,7 +49,7 @@ void Game::checkWinner()
         exitButton->setPos(exitButton_xPosition, exitButton_yPosition);
         connect(exitButton, SIGNAL(clicked()), this, SLOT(quit()));
         scene->addItem(exitButton);
-        state = 3;
+        state = 4;
     }
 }
 
@@ -144,10 +144,19 @@ void Game::drawPanel(int x, int y, int width, int height, QColor color, double o
 
 void Game::newTurn()
 {
-    for(int i =0; i < current_player->unit_list.count(); i++)
+    if(cancel_button_exist == true)
     {
-        current_player->unit_list[i]->deselection();
-        current_player->unit_list[i]->move_limit = 1;
+        cancel_button_exist = false;
+        cancel_button->deletingButton();
+    }
+    if(current_player->unit_list.count() > 0)
+    {
+        for(int i =0; i < current_player->unit_list.count(); i++)
+        {
+            current_player->unit_list[i]->deselection();
+            current_player->unit_list[i]->move_limit = 1;
+            current_player->unit_list[i]->attack_limit = 1;
+        }
     }
     if(current_player->Name == players_list[players_list.size()-1]->Name)
     {
@@ -256,7 +265,9 @@ void Game::start()
     board->placeTiles(80,80);
 
     players_list.append(new Player("Player 1", 0, 0, 0));
+    players_list[0]->list_location = 0;
     players_list.append(new Player("Player 2", 5, 5, 5));
+    players_list[1]->list_location = 1;
 
     current_player = players_list[player_number];
 

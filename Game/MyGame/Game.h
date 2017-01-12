@@ -35,8 +35,12 @@ public:
 
     bool building = false;
     bool buttons_exist = false;
+    bool cancel_button_exist = false;
     bool recruiting = false;
 
+    int * attacker_actions;
+    int attacker_x;
+    int attacker_y;
     int click_X;
     int click_Y;
     int message_x;
@@ -46,6 +50,7 @@ public:
     int resources_income[3];
     int state;
 
+    Button * cancel_button;
     Button * next_turn;
     Button * yes_button;
     Button * no_button;

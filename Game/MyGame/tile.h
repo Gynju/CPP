@@ -8,6 +8,7 @@
 
 #include "Button.h"
 #include "City.h"
+#include "Unit.h"
 
 class Tile: public QObject, public QGraphicsPixmapItem
 {
@@ -16,15 +17,18 @@ public:
     Tile(QString Terrain, int X, int Y);
     void checkTerrain();
     void colorBorder(QString who_own);
+    void grantResourceIncome();
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void setBorder();
     void settingCity();
 
+    int index;
     int list_location;
     int x_position;
     int y_position;
 
     bool border_exists;
+    bool continue_loop;
     bool has_city;
     bool occupied;
 
@@ -37,6 +41,8 @@ public:
 
     QString terrain;  
     QString owner;
+
+    Unit * occupied_by;
 
 public slots:
     void buildOnTerrain();
