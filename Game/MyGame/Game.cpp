@@ -2,6 +2,8 @@
 
 Game::Game()
 {
+    test = 0;
+
     player_number = 0;
     message_x = 1420;
     message_y = 25;
@@ -53,7 +55,7 @@ void Game::checkWinner()
     }
 }
 
-void Game::createUnit(int x, int y, QString type, QString terrain, QString owner, int where, int owner_where)
+void Game::createUnit(int x, int y, QString type, QString terrain, QString owner, int where)
 {
     Unit * unit = new Unit(x, y, type, terrain, owner, where, current_player->list_location);
     current_player->unit_list.append(unit);
@@ -215,7 +217,7 @@ void Game::play()
                     current_player->recruit_list[i]->recruit_time = 5;
                     current_player->recruiting = false;
                     current_player->recruit_list[i]->updateIcon();
-                    createUnit(current_player->city_X, current_player->city_Y, "worker", "city", current_player->Name, current_player->city_list_location, current_player->list_location);
+                    createUnit(current_player->city_X, current_player->city_Y, "worker", "city", current_player->Name, current_player->city_list_location);
                 }
             }
         }
@@ -227,7 +229,7 @@ void Game::quit()
    close();
 }
 
-void Game::QMousePressEvent(QGraphicsSceneMouseEvent *event)
+void Game::QMousePressEvent(QGraphicsSceneMouseEvent *)
 {
     click_X = floor(QCursor::pos().x()/40)*40;
     click_Y = floor(QCursor::pos().y()/40)*40;

@@ -11,7 +11,7 @@ class Building: public QObject, public QGraphicsPixmapItem
     Q_OBJECT
 public:
     Building(QString Variant);
-    void mousePressEvent(QGraphicsSceneMouseEvent *event);
+    void mousePressEvent(QGraphicsSceneMouseEvent *);
     void updateIcon();
 
     int bonus;

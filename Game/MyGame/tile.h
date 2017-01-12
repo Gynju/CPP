@@ -18,7 +18,7 @@ public:
     void checkTerrain();
     void colorBorder(QString who_own);
     void grantResourceIncome();
-    void mousePressEvent(QGraphicsSceneMouseEvent *event);
+    void mousePressEvent(QGraphicsSceneMouseEvent *);
     void setBorder();
     void settingCity();
 

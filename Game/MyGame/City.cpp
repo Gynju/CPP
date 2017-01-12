@@ -46,7 +46,7 @@ void City::checkHP()
     }
 }
 
-void City::mousePressEvent(QGraphicsSceneMouseEvent *event)
+void City::mousePressEvent(QGraphicsSceneMouseEvent *)
 {
     if(occupied == true)
     {

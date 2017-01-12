@@ -57,7 +57,7 @@ void Building::changeButtonStatus()
     game->buttons_exist = false;
 }
 
-void Building::mousePressEvent(QGraphicsSceneMouseEvent *event)
+void Building::mousePressEvent(QGraphicsSceneMouseEvent *)
 {
     if(game->buttons_exist == false && game->state == 1)
     {

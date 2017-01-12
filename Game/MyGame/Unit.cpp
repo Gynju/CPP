@@ -81,7 +81,7 @@ void Unit::deselection()
     }
 }
 
-void Unit::mousePressEvent(QGraphicsSceneMouseEvent *event)
+void Unit::mousePressEvent(QGraphicsSceneMouseEvent *)
 {
     if(game->current_player->Name == Owner)
     {
@@ -127,7 +127,7 @@ void Unit::showActions()
     qDebug()<<attack_limit;
     qDebug()<<"======";
     game->state = 1;
-    if(move_limit > 0)
+    if(move_limit > 0 && move_exist == false)
     {
         move_exist = true;
         move_button = new Button("Wykonanie ruchu", "green");
@@ -136,7 +136,7 @@ void Unit::showActions()
         connect(move_button, SIGNAL(clicked()), this, SLOT(deselection()));
         game->scene->addItem(move_button);
     }
-    else if(greyed_move_exist != true)
+    else if(greyed_move_exist != true && move_limit == 0)
     {
         greyed_move_exist = true;
         greyed_move = new Button("Limit ruchu wyczerpany", "gray");
@@ -144,7 +144,7 @@ void Unit::showActions()
         game->scene->addItem(greyed_move);
     }
 
-    if(attack_limit > 0)
+    if(attack_limit > 0 && attack_exist == false)
     {
         attack_exist = true;
         attack_button = new Button("Atak", "green");
@@ -154,7 +154,7 @@ void Unit::showActions()
 
         game->scene->addItem(attack_button);
     }
-    else if(greyed_attack_exist != true)
+    else if(greyed_attack_exist != true && attack_limit == 0)
     {
         greyed_attack_exist = true;
         greyed_attack = new Button("Limit ataku wyczerpany", "gray");

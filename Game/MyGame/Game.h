@@ -23,7 +23,7 @@ class Game: public QGraphicsView
 public:
     Game();
     void checkWinner();
-    void createUnit(int x, int y, QString type, QString terrain, QString owner, int where, int owner_where);
+    void createUnit(int x, int y, QString type, QString terrain, QString owner, int where);
     void drawBorder();
     void drawPanel(int x, int y, int width, int height, QColor color, double opacity, QString text);
     void displayMenu();
@@ -31,12 +31,14 @@ public:
     void showMessage(QString message_text);
     void update();
     void updateText();
-    void QMousePressEvent(QGraphicsSceneMouseEvent *event);
+    void QMousePressEvent(QGraphicsSceneMouseEvent *);
 
     bool building = false;
     bool buttons_exist = false;
     bool cancel_button_exist = false;
     bool recruiting = false;
+
+    int test;
 
     int * attacker_actions;
     int attacker_x;

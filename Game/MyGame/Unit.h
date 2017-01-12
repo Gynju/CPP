@@ -14,7 +14,7 @@ class Unit:public QObject, public QGraphicsPixmapItem
 public:
     Unit(int X, int Y, QString Type, QString terrain, QString owner, int where, int owner_where);
     void checkHP();
-    void mousePressEvent(QGraphicsSceneMouseEvent *event);
+    void mousePressEvent(QGraphicsSceneMouseEvent *);
     void showActions();
 
     int attack_limit;

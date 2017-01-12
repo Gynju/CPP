@@ -21,7 +21,7 @@ void Recruiting::changeButtonStatus()
     game->buttons_exist = false;
 }
 
-void Recruiting::mousePressEvent(QGraphicsSceneMouseEvent *event)
+void Recruiting::mousePressEvent(QGraphicsSceneMouseEvent *)
 {
     if(game->buttons_exist == false && game->state == 1)
     {

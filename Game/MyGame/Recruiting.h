@@ -11,7 +11,7 @@ class Recruiting: public QObject, public QGraphicsPixmapItem
     Q_OBJECT
 public:
     Recruiting(QString Variant);
-    void mousePressEvent(QGraphicsSceneMouseEvent *event);
+    void mousePressEvent(QGraphicsSceneMouseEvent *);
     void updateIcon();
 
     int recruit_time;

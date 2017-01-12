@@ -8,7 +8,7 @@ class City
 public:
    City();
    void checkHP();
-   void mousePressEvent(QGraphicsSceneMouseEvent *event);
+   void mousePressEvent(QGraphicsSceneMouseEvent *);
    void selectUnit();
 
    int hp;
