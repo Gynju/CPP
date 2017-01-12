@@ -23,7 +23,7 @@ class Game: public QGraphicsView
 public:
     Game();
     void checkWinner();
-    void createUnit(int x, int y, QString type, QString terrain, QString owner, int where);
+    void createUnit(int x, int y, QString type, QString terrain, QString owner, int where, int owner_where);
     void drawBorder();
     void drawPanel(int x, int y, int width, int height, QColor color, double opacity, QString text);
     void displayMenu();

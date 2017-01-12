@@ -53,9 +53,9 @@ void Game::checkWinner()
     }
 }
 
-void Game::createUnit(int x, int y, QString type, QString terrain, QString owner, int where)
+void Game::createUnit(int x, int y, QString type, QString terrain, QString owner, int where, int owner_where)
 {
-    Unit * unit = new Unit(x, y, type, terrain, owner, where);
+    Unit * unit = new Unit(x, y, type, terrain, owner, where, current_player->list_location);
     current_player->unit_list.append(unit);
     unit->list_location = current_player->unit_list.size()-1;
     unit->setPos(x, y);
@@ -144,6 +144,7 @@ void Game::drawPanel(int x, int y, int width, int height, QColor color, double o
 
 void Game::newTurn()
 {
+    qDebug()<<current_player->unit_list.size();
     if(cancel_button_exist == true)
     {
         cancel_button_exist = false;
@@ -158,6 +159,7 @@ void Game::newTurn()
             current_player->unit_list[i]->attack_limit = 1;
         }
     }
+
     if(current_player->Name == players_list[players_list.size()-1]->Name)
     {
         scene->update();
@@ -213,7 +215,7 @@ void Game::play()
                     current_player->recruit_list[i]->recruit_time = 5;
                     current_player->recruiting = false;
                     current_player->recruit_list[i]->updateIcon();
-                    createUnit(current_player->city_X, current_player->city_Y, "worker", "city", current_player->Name, current_player->city_list_location);
+                    createUnit(current_player->city_X, current_player->city_Y, "worker", "city", current_player->Name, current_player->city_list_location, current_player->list_location);
                 }
             }
         }

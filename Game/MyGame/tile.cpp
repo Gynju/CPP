@@ -260,7 +260,7 @@ void Tile::settingCity()
     setBorder();
     game->drawBorder();
     setPixmap(QPixmap(":img/img/town.png"));
-    game->createUnit(city->X, city->Y, "worker", this->terrain, owner, this->list_location);
+    game->createUnit(city->X, city->Y, "worker", this->terrain, owner, this->list_location, game->current_player->list_location);
     city->occupied = true;
     occupied = true;
     has_city = true;

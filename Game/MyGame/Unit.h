@@ -12,7 +12,7 @@ class Unit:public QObject, public QGraphicsPixmapItem
 {
     Q_OBJECT
 public:
-    Unit(int X, int Y, QString Type, QString terrain, QString owner, int where);
+    Unit(int X, int Y, QString Type, QString terrain, QString owner, int where, int owner_where);
     void checkHP();
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void showActions();
@@ -21,6 +21,7 @@ public:
     int hp;
     int list_location;
     int move_limit;
+    int owner_list_location;
     int position;
     int range;
     int x_position;

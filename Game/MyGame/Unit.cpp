@@ -5,8 +5,9 @@
 extern Game * game;
 extern Tile * tile;
 
-Unit::Unit(int X, int Y, QString Type, QString terrain, QString owner, int where)
+Unit::Unit(int X, int Y, QString Type, QString terrain, QString owner, int where, int owner_where)
 {
+    owner_list_location = owner_where;
     attack_limit = 1;
     attacked = false;
     hp = 1;
@@ -21,6 +22,7 @@ Unit::Unit(int X, int Y, QString Type, QString terrain, QString owner, int where
     x_position = X;
     y_position = Y;
     position = where;
+    list_location = game->current_player->unit_list.size();
     QRect(x_position, y_position, 40, 40);
     type = Type;
     occupied_terrain = terrain;
@@ -48,6 +50,7 @@ void Unit::checkHP()
     if(hp <= 0)
     {
         game->tile_list[position]->occupied = false;
+        game->players_list[owner_list_location]->unit_list.removeAt(list_location);
         delete this;
     }
 }
@@ -108,6 +111,11 @@ void Unit::move()
 
 void Unit::selectUnit()
 {
+    if(game->cancel_button_exist == true)
+    {
+        game->cancel_button_exist = false;
+        game->cancel_button->deletingButton();
+    }
     game->current_player->unit_list[list_location]->selected = true;
     game->current_player->unit_list[list_location]->setPixmap(QPixmap(":img/img/selected_worker.png"));
     game->current_player->unit_list[list_location]->showActions();
